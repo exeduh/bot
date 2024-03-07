@@ -335,7 +335,37 @@ client.on("messageCreate", async (message) => {
           .setColor("#0099ff");
 
         message.reply({ embeds: [ipv6Embed] });
-     }
+     } else if (command === "ship") {
+    if (message.mentions.users.size !== 2) {
+      return message.reply("Please mention exactly two users.");
+    }
+
+    const user1 = message.mentions.users.first();
+    const user2 = message.mentions.users.last();
+
+    const percentage = Math.floor(Math.random() * 100) + 1;
+
+    let messageText;
+    if (percentage > 90) {
+      messageText = "Meant to be together!";
+    } else if (percentage > 70) {
+      messageText = "Have a strong connection!";
+    } else if (percentage > 50) {
+      messageText = "Are a good match!";
+    } else if (percentage > 30) {
+      messageText = "Might work out!";
+    } else {
+      messageText = "Are not a good match.";
+    }
+
+    const shipEmbed = new MessageEmbed()
+      .setColor("#0099ff")
+      .setTitle(`Ship Compatibility`)
+      .setDescription(`${user1.username} ${percentage}% ${user2.username}\n${messageText}`)
+      .setFooter("Ship command powered by randomness!");
+
+    message.reply({ embeds: [shipEmbed] });
+ }
 });
 
 client.on("guildCreate", async (guild) => {
