@@ -382,11 +382,14 @@ function proceedWithShip(user1, user2) {
         messageText = "Are not a good match.";
     }
 
+    // Create a progress bar
+    const progressBarLength = 10; // Adjust this to change the length of the progress bar
+    const progressBar = '■'.repeat(Math.floor(percentage / 100 * progressBarLength)).padEnd(progressBarLength, '-');
+
     const shipEmbed = new MessageEmbed()
         .setColor("#0099ff")
         .setTitle(`Ship Compatibility`)
-        .setDescription(`${user1.username} ${percentage}% ${user2.username}\n${messageText}`)
-        .setFooter("Ship command powered by randomness!");
+        .setDescription(`${user1.username} ${percentage}% ${user2.username}\n${progressBar}\n${messageText}`);
 
     message.reply({ embeds: [shipEmbed] });
 }
