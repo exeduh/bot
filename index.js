@@ -336,36 +336,60 @@ client.on("messageCreate", async (message) => {
 
         message.reply({ embeds: [ipv6Embed] });
      } else if (command === "ship") {
-    if (message.mentions.users.size !== 2) {
-      return message.reply("Please mention exactly two users.");
+    let user1, user2;
+
+    if (message.mentions.users.size === 2) {
+        user1 = message.mentions.users.first();
+        user2 = message.mentions.users.last();
+    } else {
+        const userIds = message.content.split(' ').slice(1);
+
+        if (userIds.length !== 2) {
+            return message.reply("Please provide exactly two user IDs or mention two users.");
+        }
+
+        Promise.all(userIds.map(id => client.users.fetch(id)))
+            .then(users => {
+                user1 = users[0];
+                user2 = users[1];
+
+                proceedWithShip(user1, user2);
+            })
+            .catch(error => {
+                console.error(error);
+                message.reply("An error occurred while fetching user data.");
+            });
     }
 
-    const user1 = message.mentions.users.first();
-    const user2 = message.mentions.users.last();
+    if (user1 && user2) {
+        proceedWithShip(user1, user2);
+    }
+}
 
+function proceedWithShip(user1, user2) {
     const percentage = Math.floor(Math.random() * 100) + 1;
 
     let messageText;
     if (percentage > 90) {
-      messageText = "Meant to be together!";
+        messageText = "Meant to be together!";
     } else if (percentage > 70) {
-      messageText = "Have a strong connection!";
+        messageText = "Have a strong connection!";
     } else if (percentage > 50) {
-      messageText = "Are a good match!";
+        messageText = "Are a good match!";
     } else if (percentage > 30) {
-      messageText = "Might work out!";
+        messageText = "Might work out!";
     } else {
-      messageText = "Are not a good match.";
+        messageText = "Are not a good match.";
     }
 
     const shipEmbed = new MessageEmbed()
-      .setColor("#0099ff")
-      .setTitle(`Ship Compatibility`)
-      .setDescription(`${user1.username} ${percentage}% ${user2.username}\n${messageText}`)
-      .setFooter("Ship command powered by randomness!");
+        .setColor("#0099ff")
+        .setTitle(`Ship Compatibility`)
+        .setDescription(`${user1.username} ${percentage}% ${user2.username}\n${messageText}`)
+        .setFooter("Ship command powered by randomness!");
 
     message.reply({ embeds: [shipEmbed] });
- }
+}
 });
 
 client.on("guildCreate", async (guild) => {
